@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="heading">{{ heading_h1 }}</h1>
+<div class="main_tables">
+    <form class="register-form row g-3" action="" method="POST" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        <div class="col-md-6">
+              <p class="label">Логин</p>
+              {{ form.login(class="form-control", placeholder="Логин") }}
+              {% for error in form.login.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+              {% endfor %}
+        </div>
+      <div class="col-md-6">
+              <p class="label">Имя</p>
+              {{ form.name(class="form-control", placeholder="Имя") }}
+              {% for error in form.login.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+              {% endfor %}
+        </div>
+      <div class="col-md-6">
+              <p class="label">Фамилия</p>
+              {{ form.surname(class="form-control", placeholder="Фамилия") }}
+              {% for error in form.login.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+              {% endfor %}
+        </div>
+      <div class="col-md-6">
+              <p class="label">Отчество</p>
+              {{ form.middle_name(class="form-control", placeholder="Отчество") }}
+              {% for error in form.login.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+              {% endfor %}
+        </div>
+      <div class="col-md-6">
+              <p class="label">Номер телефона</p>
+              {{ form.phone_number(class="form-control", placeholder="Номер телефона") }}
+              {% for error in form.login.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+              {% endfor %}
+        </div>
+        <div class="col-md-6">
+              <p class="label">Email</p>
+              {{ form.email(type="email", class="form-control", placeholder="Email") }}
+              {% for error in form.email.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+              {% endfor %}
+        </div>
+        <div class="col-md-6">
+              <p class="label">Пароль</p>
+              {{ form.password(class="form-control", type="password", placeholder="Пароль") }}
+              {% for error in form.password.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+              {% endfor %}
+        </div>
+        <div class="col-md-6">
+              <p class="label">Повторите пароль</p>
+              {{ form.password_again(class="form-control", type="password", placeholder="Повторите пароль") }}
+              {% for error in form.password_again.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+              {% endfor %}
+        </div>
+        {{ form.submit(type="submit", class="btn btn-outline-dark submit-btn") }}
+        <div>{{ message }}</div>
+        <div style="display: flex; justify-content: space-between;">
+            <a class="link-secondary link-underline-dark link-offset-1" href="login">Уже есть аккаунт? Войти...</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

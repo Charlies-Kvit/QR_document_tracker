@@ -7,16 +7,27 @@ from data.Users import User
 from data.Groups import Group
 from data.Group_users import GroupUsers
 from data.Documents import Document
+from forms.user import RegisterForm, LoginForm
+from functions import secret_key_generator
 
 
 app = Flask(__name__)
+app.secret_key = secret_key_generator(120)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
 
 @app.route("/")
 def index():
-    return render_template('base.html', title="Главная страница", current_user=current_user)
+    context = {"title": "Главная страница", "current_user": current_user}
+    return render_template('index.html', context=context)
+
+
+@app.route("/register", methods=['GET', 'POST'])
+def register():
+    form = RegisterForm()
+    if form.validate_on_submit()
+    return render_template("register.html", form=form, heading_h1="Регистрация", title="Регистрация")
 
 
 @login_manager.user_loader

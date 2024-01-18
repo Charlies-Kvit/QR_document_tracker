@@ -8,6 +8,7 @@
               crossorigin="anonymous">
     </head>
     <body>
+    <header>
         <nav class="navbar navbar-dark bg-dark">
             <a class="navbar-brand" href="/">QR трекер доументов</a>
             {% if current_user.is_authenticated %}
@@ -22,5 +23,23 @@
             {% endif %}
             </div>
         </nav>
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    <footer>
+        <nav class="navbar navbar-dark bg-dark fixed-bottom navbar-expand-lg bg-body-tertiary" style="background-color: #3a424b;">
+            <div class="container-fluid">
+                <span class="navbar-text logo">
+                    <a class="navbar-brand" href="/">TemplateStock</a>
+                </span>
+                <div class="collapse navbar-collapse" id="navbarText">
+                    <span class="navbar-text" style="color: white;">
+                        © 2024, «QR трекер доументов»
+                    </span>
+                </div>
+            </div>
+        </nav>
+    </footer>
     </body>
 </html>
