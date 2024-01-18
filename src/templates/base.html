@@ -8,6 +8,19 @@
               crossorigin="anonymous">
     </head>
     <body>
-        <nav>QR трекер доументов</nav>
+        <nav class="navbar navbar-dark bg-dark">
+            <a class="navbar-brand" href="/">QR трекер доументов</a>
+            {% if current_user.is_authenticated %}
+            <div class="menu-btn">
+                <a class="btn btn-dark" href="\lms">Личный кабинет</a>
+                <a class="btn btn-outline-secondary" href="\groups">Группы</a>
+            </div>
+            {% else %}
+            <div class="menu-btn">
+                <a class="btn btn-dark" href="\login">Вход</a>
+                <a class="btn btn-outline-secondary" href="\register">Регистрация</a>
+            {% endif %}
+            </div>
+        </nav>
     </body>
 </html>

@@ -16,7 +16,7 @@ login_manager.init_app(app)
 
 @app.route("/")
 def index():
-    return render_template('base.html', title="Главная страница")
+    return render_template('base.html', title="Главная страница", current_user=current_user)
 
 
 @login_manager.user_loader

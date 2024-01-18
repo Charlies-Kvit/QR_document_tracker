@@ -1,4 +1,5 @@
 import json
+import os
 
 with open('config.json', 'r') as json_dump:
     data = json.load(json_dump)
