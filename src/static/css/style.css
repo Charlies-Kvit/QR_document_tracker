@@ -1,0 +1,23 @@
+.t1 {
+    padding-left: 1rem;
+}
+
+.menu-btn {
+    padding-right: 1rem;
+}
+
+.heading {
+    text-align: center;
+}
+.center {
+    display: flex;
+    justify-content: center;
+}
+form {
+    width: 50%;
+}
+
+.main_tables {
+    display: flex;
+    justify-content: center;
+}

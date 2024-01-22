@@ -8,3 +8,7 @@ requests~=2.28.2
 waitress~=2.1.2
 flask_restful
 sqlalchemy_serializer
+email_validate
+phonenumbers
+flask-mail
+jwt

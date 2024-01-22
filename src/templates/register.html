@@ -17,7 +17,7 @@
       <div class="col-md-6">
               <p class="label">Имя</p>
               {{ form.name(class="form-control", placeholder="Имя") }}
-              {% for error in form.login.errors %}
+              {% for error in form.name.errors %}
                 <div class="alert alert-danger" role="alert">
                     {{ error }}
                 </div>
@@ -26,7 +26,7 @@
       <div class="col-md-6">
               <p class="label">Фамилия</p>
               {{ form.surname(class="form-control", placeholder="Фамилия") }}
-              {% for error in form.login.errors %}
+              {% for error in form.surname.errors %}
                 <div class="alert alert-danger" role="alert">
                     {{ error }}
                 </div>
@@ -35,7 +35,7 @@
       <div class="col-md-6">
               <p class="label">Отчество</p>
               {{ form.middle_name(class="form-control", placeholder="Отчество") }}
-              {% for error in form.login.errors %}
+              {% for error in form.middle_name.errors %}
                 <div class="alert alert-danger" role="alert">
                     {{ error }}
                 </div>
@@ -44,7 +44,7 @@
       <div class="col-md-6">
               <p class="label">Номер телефона</p>
               {{ form.phone_number(class="form-control", placeholder="Номер телефона") }}
-              {% for error in form.login.errors %}
+              {% for error in form.phone_number.errors %}
                 <div class="alert alert-danger" role="alert">
                     {{ error }}
                 </div>
@@ -77,9 +77,20 @@
                 </div>
               {% endfor %}
         </div>
+        <!--<div class="col-md-6" style="display: flex;">
+              {{ form.agree() }}
+            <p class="form-check-label">
+                Даю согласие на обработку персональных данных
+              </p>
+              {% for error in form.agree.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+              {% endfor %}
+        </div>-->
         {{ form.submit(type="submit", class="btn btn-outline-dark submit-btn") }}
         <div>{{ message }}</div>
-        <div style="display: flex; justify-content: space-between;">
+        <div class="center">
             <a class="link-secondary link-underline-dark link-offset-1" href="login">Уже есть аккаунт? Войти...</a>
         </div>
     </form>
