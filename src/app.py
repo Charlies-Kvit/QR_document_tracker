@@ -1,7 +1,6 @@
-from flask import Flask, render_template, url_for,redirect, request, flash
-from flask_mail import Mail, Message
+from flask import Flask, render_template, url_for, redirect, request, flash
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
-from config import HOST, PORT, DEBUG, DATA_BASE, MailConfig
+from config import HOST, PORT, DEBUG, DATA_BASE, API_KEY, ADDRESS
 from waitress import serve
 from data import db_session
 from data.Users import User
@@ -9,14 +8,12 @@ from data.Groups import Group
 from data.Group_users import GroupUsers
 from data.Documents import Document
 from forms.user import RegisterForm, LoginForm
-from functions import secret_key_generator, check_email, check_phone_number, get_int_phone_number, send_email
-import jwt
-
+from functions import (secret_key_generator, check_email, check_phone_number, get_int_phone_number, send_email,
+                       generate_token, confirm_token)
 
 app = Flask(__name__)
-app.config.from_object(MailConfig)
-mail = Mail(app)
 app.secret_key = secret_key_generator(120)
+app.config['SECURITY_PASSWORD_SALT'] = API_KEY
 login_manager = LoginManager()
 login_manager.init_app(app)
 
@@ -77,20 +74,26 @@ def register():
         user.set_password(form.password.data)
         session.add(user)
         session.commit()
-        token = jwt.encode({'mail_confirm': user.id}, app.secret_key, algorithm='HS256')
-        link = url_for("confirm_email", token=token)
         session.close()
-        send_email("Подтверждение почты", MailConfig.MAIL_USERNAME, [form.email.data],
-                   "Нажмите на кнопку для подтверждения почты, если вы не регестрировались на сайте qr tracker,"
-                   " то игнорируйте письмо", f"<a href='{link}'>Подтвердить почту</a>")
-        return redirect("/need_confirm")
+        return redirect(f"/need_confirm?email={form.email.data}")
     return render_template("register.html", form=form, heading_h1=heading_h1, title=title)
 
 
 @app.route("/need_confirm")
 def show_confirm():
+    email = request.values.get("email")
     h1 = "Нужно подтверждение вашей почты"
     title = "Нужно подтверждение"
+    session = db_session.create_session()
+    check_email = session.query(User).filter(User.email == email).first()
+    if not check_email:
+        link = url_for("register")
+        return render_template("need_confirm.html", h1=h1, title=title, msg="Такой почты в бд нет, "
+                                                                            "зарегестрируйтесь", link=link)
+    token = generate_token(email)
+    # jwt.encode({'mail_confirm': user_id}, app.secret_key, algorithm='HS256')
+    link = f"{ADDRESS}" + url_for("confirm_email", token=token)
+    send_email("Подтверждение почты", email, link)
     return render_template("need_confirm.html", h1=h1, title=title)
 
 
@@ -98,10 +101,19 @@ def show_confirm():
 def confirm_email():
     token = request.values.get("token")
     try:
-        user_id = jwt.decode(token, app.secret_key, algorithms=['HS256'])['mail_confirm']
+        email = confirm_token(token)
+        assert not email is False
     except:
-        pass
-    print(User.query.get(user_id))
+        h1 = "Нужно подтверждение вашей почты"
+        title = "Нужно подтверждение"
+        return render_template("need_confirm.html", h1=h1, title=title, msg="Токен просрочен, на почту"
+                                                                            " повторно отправлено письмо")
+    db_sess = db_session.create_session()
+    user = db_sess.query(User).filter(User.email == email).first()
+    user.confirm = True
+    db_sess.commit()
+    db_sess.close()
+    return redirect("/login?confirmed=true")
 
 
 @app.route('/login', methods=["GET", "POST"])
@@ -109,6 +121,10 @@ def login():
     form = LoginForm()
     heading_h1 = "Авторизация"
     title = heading_h1
+    if request.values.get("confirmed"):
+        msg = "Почта успешно была подтверждена!"
+    else:
+        msg = ""
     if form.validate_on_submit():
         session = db_session.create_session()
         user_name = form.login_email.data
@@ -124,10 +140,17 @@ def login():
             session.close()
             return render_template("login.html", heading_h1=heading_h1, title=title, form=form,
                                    message="Неверный пароль")
+        if not user.confirm:
+            user_id = user.id
+            email = user.email
+            session.close()
+            return render_template("login.html", heading_h1=heading_h1, title=title, form=form,
+                                   message=f"Почта не подтверждена. "
+                                           f"<a href='/need_confirm?user_id={user_id}&email={email}'>Отправить повторно?</a>")
         login_user(user, remember=form.remember_me.data)
         session.close()
         return redirect("/")
-    return render_template("login.html", heading_h1=heading_h1, title=title, form=form)
+    return render_template("login.html", heading_h1=heading_h1, title=title, form=form, message=msg)
 
 
 @app.route("/logout")
@@ -136,11 +159,17 @@ def logout():
     logout_user()
     return redirect("/")
 
+"""
+@app.route("/lms")
+@login_required
+def lms():
+    """
+
 
 @login_manager.user_loader
 def load_user(user_id):
     db_sess = db_session.create_session()
-    user = User.query.get(user_id)
+    user = db_sess.query(User).get(user_id)
     db_sess.close()
     return user
 

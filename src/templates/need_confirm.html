@@ -1,6 +1,19 @@
 {% extends "base.html" %}
 
 {% block content %}
+<style>
+    h1, h2 {
+    text-align: center;
+    }
+    p {
+    text-align: center;
+    }
+</style>
 <h1>{{ h1 }}</h1>
-<p>Мы выслали вам на почту письмо с сыллкой для подтвержения</p>
+<p>Мы выслали вам на почту письмо с сыллкой для подтвержения(проверьте папку спам)</p>
+{% if link %}
+    <a href="{{ link }}"><h2>{{ msg }}</h2></a>
+{% else %}
+    <h2>{{ msg }}</h2>
+{% endif %}
 {% endblock %}
